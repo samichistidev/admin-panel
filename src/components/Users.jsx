@@ -1,39 +1,23 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [sortAsc, setSortAsc] = useState(true);
-  const [loading, setLoading] = useState(true);
 
-  const fetchUsers = () => {
-    setLoading(true);
+  useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((res) => res.json())
-      .then((data) => {
-        setUsers(data);
-        setFiltered(data);
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchUsers();
+      .then((data) => setUsers(data));
   }, []);
 
-  useEffect(() => {
-    let filteredData = users.filter(
+  const filtered = users
+    .filter(
       (u) =>
         u.name.toLowerCase().includes(search.toLowerCase()) ||
         u.email.toLowerCase().includes(search.toLowerCase()),
-    );
-    if (!sortAsc) filteredData = filteredData.sort((a, b) => b.id - a.id);
-    else filteredData = filteredData.sort((a, b) => a.id - b.id);
-    setFiltered(filteredData);
-  }, [search, sortAsc, users]);
-
-  if (loading) return <p className="p-6">Loading users...</p>;
+    )
+    .sort((a, b) => (sortAsc ? a.id - b.id : b.id - a.id));
 
   return (
     <div className="p-6">
@@ -53,15 +37,8 @@ export default function Users() {
           >
             Sort {sortAsc ? "↓" : "↑"}
           </button>
-          <button
-            className="px-3 py-1 bg-green-600 text-white rounded"
-            onClick={fetchUsers}
-          >
-            Refresh
-          </button>
         </div>
       </div>
-
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300">
           <thead>
@@ -69,8 +46,6 @@ export default function Users() {
               <th className="border p-2">ID</th>
               <th className="border p-2">Name</th>
               <th className="border p-2">Email</th>
-              <th className="border p-2">Username</th>
-              <th className="border p-2">Website</th>
             </tr>
           </thead>
           <tbody>
@@ -79,8 +54,6 @@ export default function Users() {
                 <td className="border p-2">{u.id}</td>
                 <td className="border p-2">{u.name}</td>
                 <td className="border p-2">{u.email}</td>
-                <td className="border p-2">{u.username}</td>
-                <td className="border p-2">{u.website}</td>
               </tr>
             ))}
           </tbody>
