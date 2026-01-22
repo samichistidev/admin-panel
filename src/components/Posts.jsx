@@ -31,7 +31,7 @@ export default function Posts() {
           Refresh
         </button>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto">
         {posts.slice(0, 20).map((post) => (
           <div key={post.id} className="bg-white shadow rounded p-4">
             <h3 className="font-semibold">{post.title}</h3>
